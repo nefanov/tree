@@ -30,5 +30,5 @@ class Synth:
 	def __setitem__(self,key,value):
 		self.num[key] = value
 
-	def __str__(self)
+	def __str__(self):
 		print(self.num)
