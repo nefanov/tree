@@ -1,3 +1,4 @@
+from atriact import *
 class Tree: # represents a tree/subtree
 	def __init__(self, root=Node())
 		self.root = root
@@ -22,10 +23,13 @@ class Tree: # represents a tree/subtree
 
 
 class Node:
-	def __init__(self, data=(None, None, None, None), parent=None, children=[])
+	def __init__(self, data=(None, None, None, []), parent=None, children=[])
+
 		self.parent=parent
 		self.children=children
-		(self.I.ptr, self.I.names, self.I.act, self.S) = data # attributes
+		self.I = Inh()
+		self.S = Synth()
+		(self.I.ptr, self.I.names, self.I.act, self.S.num) = data # attributes
 
 	def add_child(self, child=Node()):
 		child.parent = self
