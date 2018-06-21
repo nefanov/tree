@@ -1,5 +1,5 @@
 class Tree: # represents a tree/subtree
-	def __init__(self, root=Node(None))
+	def __init__(self, root=Node())
 		self.root = root
 
 #recursive dfs
@@ -22,10 +22,10 @@ class Tree: # represents a tree/subtree
 
 
 class Node:
-	def __init__(self, data, parent=None, children=[])
+	def __init__(self, data=(None, None, None, None), parent=None, children=[])
 		self.parent=parent
 		self.children=children
-		self.attr = data # attributes
+		(self.I.ptr, self.I.names, self.I.act, self.S) = data # attributes
 
 	def add_child(self, child=Node()):
 		child.parent = self
