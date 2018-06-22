@@ -18,10 +18,6 @@ class Node:
 		self.parent=parent
 		return self
 
-
-# maybe needs to set i/s attributes by separated classes
-
-
 # search routines
 
 	#recursive dfs
