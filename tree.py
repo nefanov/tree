@@ -32,12 +32,14 @@ class Node:
 
 	#upward branch checking from current node to some global root
 
-	def upbranch(self, action=None):
-		current =  self
+	def upbranch(self, action=action_check_attr, **kwargs):
+		chk, current =  False, self
 		while current.parent != None:
-			#chk action, thn
+			chk, current = action(current, **kwargs)
+			if chk:
+				break
 			current = current.parent
-		return
+		return (chk, current)
 
 
 class Tree: # represents a tree/subtree

@@ -32,3 +32,18 @@ class Synth:
 
 	def __str__(self):
 		print(self.num)
+
+
+
+def check_cf():
+	return
+
+# action fmt: get atts from tree, return True if cond, else false
+
+def action_check_attr(current, **kwargs):
+	if current.S[**kwargs['name']] == **kwargs['value']
+		return (True, current)
+	return (False, current)
+
+
+def action_
