@@ -21,14 +21,19 @@ class Node:
 # search routines
 
 	#recursive dfs
-	def dfs(self, action=None):
+	def dfs(self, action=action_check_attr, **kwargs):
 		current = self
-		# chk action
+		chk, current = action(current, **kwargs)
+		if chk:
+			return (chk, current)
+		
 		if len(current.children)==0:
-			return
+			return (chk, current)
 		else:
 			for node in current.children:
-				self.dfs(node)
+				(chk, crnt) = self.dfs(node)
+				if chk:
+					return (chk, crnt) # ret from recursion
 
 	#upward branch checking from current node to some global root
 

@@ -41,9 +41,7 @@ def check_cf():
 # action fmt: get atts from tree, return True if cond, else false
 
 def action_check_attr(current, **kwargs):
-	if current.S[**kwargs['name']] == **kwargs['value']
+	if current.S[kwargs.pop('name')] == kwargs.pop('value'):
 		return (True, current)
 	return (False, current)
 
-
-def action_
