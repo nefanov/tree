@@ -56,7 +56,7 @@ class Tree: # represents a tree/subtree
 		if not root:
 			root = self.root
 		current = root
-                chk, current = action(current, **kwargs)
+		chk, current = action(current, **kwargs)
 		if chk:
 			return (chk, current)
 
