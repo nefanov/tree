@@ -72,7 +72,7 @@ class Tree: # represents a tree/subtree
 
 	def upbranch(self, bottom=None ,action=None, **kwargs):
 		chk, current = False, self.root
-		if bottom:
+		if bottom: # метод умеет стартовать с некоторой выбранной вершины, не обязательно с корня (под)дерева
 			current = bottom
 		while current.parent != None:
 			chk, current = action(current, **kwargs)
