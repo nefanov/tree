@@ -102,7 +102,7 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
                     fill_struct.S[fill_struct.I.names['fifo']].append('{}_-_{}\n'.format(k,v))
                 else:
                     fill_struct.S[fill_struct.I.names['files']].append('{}_-_{}\n'.format(k,v))
-    children  = tree[node]
+    children = tree[node]
     print('tree:', tree, tree[node], tree[node].__class__)
 
     if node not in tree:
