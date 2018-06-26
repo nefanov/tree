@@ -52,24 +52,31 @@ class Tree: # represents a tree/subtree
 		self.root = root
 
 #recursive dfs
-	def dfs(self, root=None, action=None):
+	def dfs(self, root=None, action=None, **kwargs):
 		if not root:
 			root = self.root
 		current = root
+                chk, current = action(current, **kwargs)
+		if chk:
+			return (chk, current)
 
-		# chk action
 		if len(current.children)==0:
-			return
+			return (chk, current)
 		else:
 			for node in current.children:
-				self.dfs(node)
+				(chk, crnt) = self.dfs(node)
+				if chk:
+					return (chk, crnt)
 			
 #upward branch checking from current root to some global root
 
-	def upbranch(self, action=None):
-		while self.root.parent != None:
-			#chk action, thn
-			self.root = self.root.parent
+	def upbranch(self, bottom=None ,action=None, **kwargs):
+		chk, current = False, self.root
+		if bottom:
+			current = bottom
+		while current.parent != None:
+			chk, current = action(current, **kwargs)
+			current = current.parent
 		return
 
 
