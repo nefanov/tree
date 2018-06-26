@@ -27,11 +27,11 @@ class Node:
 		if chk:
 			return (chk, current)
 		
-		if len(current.children)==0:
+		if len(current.children)<=0:
 			return (chk, current)
 		else:
 			for node in current.children:
-				(chk, crnt) = self.dfs(node)
+				(chk, crnt) = self.dfs(action)
 				if chk:
 					return (chk, crnt) # ret from recursion
 

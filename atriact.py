@@ -45,3 +45,7 @@ def action_check_attr(current, **kwargs):
 		return (True, current)
 	return (False, current)
 
+
+def action_print(current, **kwargs):
+	print(current.I.names['p'])
+	return (False, current)
