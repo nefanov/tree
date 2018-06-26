@@ -39,6 +39,7 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
         sid = os.getsid(psutil.Process(node).pid)
         fds = [] # list of results from file descriptors
        	fd_procfs = glob.glob('/proc/'+ str(psutil.Process(node).pid) + '/fd/*')
+        print('on_try:ok')
         for line in fd_procfs:
             try:
                 with open('/proc/'+ str(psutil.Process(node).pid) + '/fdinfo/'+ line.split('/')[-1], 'rt+') as finfo:
@@ -103,28 +104,26 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
                 else:
                     fill_struct.S[fill_struct.I.names['files']].append('{}_-_{}\n'.format(k,v))
     children = tree[node]
-    print('tree:', tree, tree[node], tree[node].__class__)
+
 
     if node not in tree:
         return fill_struct
 
     dummy = [None, None, None, None, [], [], [], []]
+    print(children)
     for cnt, child in enumerate(children):
-        sys.stdout.write(indent+'|- ')
+#        sys.stdout.write(indent+'|- ')
+        name = psutil.Process(child).name()
+        pgid = os.getpgid(psutil.Process(child).pid)
+        pid = psutil.Process(child).pid
+        sid = os.getsid(psutil.Process(child).pid)
+        dummy = [pid, pgid, sid, psutil.Process(child).ppid(), [], [], [], []]
         node_entry = Node(data=(None, {'p':0,'g':1,'s':2,'pp':3,'socket':4,'pipe':5,'fifo':6,'files':7}, None, dummy), parent=fill_struct)
-        return print_tree(child, tree, indent+'| ',output_dir , permanent, filler, fill_struct.add_child(node_entry) )
-'''
-    children = tree[node][:-1]
-    for child in children:
-        sys.stdout.write(indent + "|- ")
-        return print_tree(child, tree, indent + "| ", )
-    child = tree[node][-1]
 
-    sys.stdout.write(indent + "`_ ")
-    
-    print_tree(child, tree, indent + "  ", output_dir, permanent, filler, fill_struct, **kwargs)
+        print_tree(child, tree, indent+'| ',output_dir , permanent, filler, fill_struct.add_child(node_entry) )
     return fill_struct
-'''
+    print('exited with children', children, 'of', node)
+
 # make pstree as data structure
 # now this is a dict of lists: 'ppid': [pids]
 def get_pstree():
