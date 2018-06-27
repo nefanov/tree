@@ -1,5 +1,14 @@
 # 'atriact': actions with attributes
+from tree import Node
 
+default_inh={'p': 0,
+            'g': 1,
+            's': 2,
+            'pp': 3,
+            'socket': 4,
+            'pipe': 5,
+            'fifo': 6,
+            'files': 7}
 class Inh:
     def __init__(self, ptrs=None, names=None, act=None):
         self.ptr = ptrs
@@ -37,8 +46,39 @@ class Synth:
         print(self.num)
 
 
-def check_cf():
-    return
+def check_cf(current, **kwargs):
+    if not current.parent: # maybe Init process
+        return False, current
+
+    # 2 1 1
+    if current.S[current.I.names['g']] == current.parent.S[current.parent.I.names['g']] and \
+        current.S[current.I.names['s']] == current.parent.S[current.parent.I.names['s']]:
+        current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
+        if 'check_fds' in kwargs:
+            pass
+    # 1 1 1
+    elif current.S[current.I.names['p']] == current.S[current.I.names['g']] == current.S[current.I.names['s']]:
+        new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
+                                    current.parent.S[current.parent.I.names['g']],
+                                    current.parent.S[current.parent.I.names['s']],
+                                    current.S[current.I.names['pp']],
+                                    current.S[4], current.S[5], current.S[6], current.S[7]]), parent=current.parent)
+        current.parent = new_state
+        new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
+        current.I.act = 'setsid()'
+        new_state.add_child(current)
+    # 1 2 1
+    elif current.S[current.I.names['p']] == current.S[current.I.names['g']] != current.S[current.I.names['s']]:
+        new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
+                                    current.parent.S[current.parent.I.names['g']],
+                                    current.parent.S[current.parent.I.names['s']],
+                                    current.S[current.I.names['pp']],
+                                    current.S[4], current.S[5], current.S[6], current.S[7]]), parent=current.parent)
+        current.parent = new_state
+        new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
+        current.I.act = 'setpgid'+'('+str(new_state.S[new_state.I.names['p']])+')'
+        new_state.add_child(current)
+    return (False, current)
 
 
 # action fmt: get atts from tree, return True if cond, else false
