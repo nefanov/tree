@@ -32,7 +32,11 @@ class Node:
             return (chk, current)
         else:
             for node in current.children:
-                (chk, crnt) = node.dfs(action, **kwargs)
+                print(node.__class__, node)
+                try:
+                    (chk, crnt) = node.dfs(action, **kwargs)
+                except Exception as e:
+                    print(e)
                 if chk:
                     return (chk, crnt)  # ret from recursion
 

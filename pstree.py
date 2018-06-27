@@ -112,7 +112,8 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
 
     print(children)
     for cnt, child in enumerate(children):
-#        sys.stdout.write(indent+'|- ')
+        sys.stdout.write(indent+'|- ')
+        print('dbglog',psutil.Process(child).pid)
         name = psutil.Process(child).name()
         pgid = os.getpgid(psutil.Process(child).pid)
         pid = psutil.Process(child).pid
