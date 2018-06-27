@@ -18,7 +18,7 @@ sys.path.append(parentdir_of_file)
 
 
 # construct tree with attributes recursively
-def construct_tree(node, tree, indent='  ', output_dir='./', permanent = False, filler=False, fill_struct=None,  **kwargs):
+def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, filler=False, fill_struct=None,  **kwargs):
     pgid = sid = pid = 1
     fds = []
     try:
@@ -149,7 +149,7 @@ def get_pstree():
 
 
 def save_serialized(fn, obj):
-    return pickle.dump(obj,fn)
+    return pickle.dump(obj, fn)
 
 
 if __name__ == '__main__':

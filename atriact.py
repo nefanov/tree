@@ -1,3 +1,5 @@
+# 'atriact': actions with attributes
+
 class Inh:
     def __init__(self, ptrs=None, names=None, act=None):
         self.ptr = ptrs
