@@ -143,7 +143,7 @@ def get_pstree():
                              'files': 7}, None, dummy), parent=None)
 
     construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct = root)
-    root.dfs(action_print, K='p')
+    root.dfs(action_print, K='p',__noprint__prefix='|- ')
     return tree
 
 

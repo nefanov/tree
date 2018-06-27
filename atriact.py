@@ -48,7 +48,8 @@ def action_check_attr(current, **kwargs):
 
 
 def action_print(current, **kwargs):
+    prefix = kwargs.pop('__noprint__prefix')
     for k, v in kwargs.items():
         if not '__noprint__' in k:
-            print(current.S.num, current.S[current.I.names[v]])
+            print(prefix, current.S.num, current.S[current.I.names[v]])
     return (False, current)

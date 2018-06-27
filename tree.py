@@ -31,11 +31,13 @@ class Node:
         if len(current.children) <= 0:
             return (chk, current)
         else:
+            if '__noprint__prefix' in kwargs:
+                kwargs['__noprint__prefix'] += '|- '
             for node in current.children:
                 try:
                     (chk, crnt) = node.dfs(action, **kwargs)
                 except Exception as e:
-                    print(e)
+                    print(e,'\n')
                 if chk:
                     return (chk, crnt)  # ret from recursion
 
