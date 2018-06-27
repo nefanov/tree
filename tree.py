@@ -2,10 +2,10 @@ from atriact import *
 
 
 class Node:
-    def __init__(self, data=(None, None, None, []), parent=None, children=[]):
+    def __init__(self, data=(None, None, None, []), parent=None):
 
         self.parent = parent
-        self.children = children
+        self.children = []
         self.I = Inh()
         self.S = Synth()
         (self.I.ptr, self.I.names, self.I.act, self.S.num) = data  # attributes
@@ -32,7 +32,7 @@ class Node:
             return (chk, current)
         else:
             for node in current.children:
-                (chk, crnt) = self.dfs(action)
+                (chk, crnt) = node.dfs(action, **kwargs)
                 if chk:
                     return (chk, crnt)  # ret from recursion
 
@@ -79,3 +79,39 @@ class Tree:  # represents a tree/subtree
             chk, current = action(current, **kwargs)
             current = current.parent
         return
+
+
+def unittest():
+    dummy = [1, 2, 3, 4, [], [], [], []]
+    dummy2 = [5, 6, 7, 8, [], [], [], []]
+    dummy3 = [9, 10, 11, 12, [], [], [], []]
+    t = Node(data=(None, {'p': 0,
+                                       'g': 1,
+                                       's': 2,
+                                       'pp': 3,
+                                       'socket': 4,
+                                       'pipe': 5,
+                                       'fifo': 6,
+                                       'files': 7}, None, dummy))
+    t.add_child(Node(data=(None, {'p': 0,
+                                       'g': 1,
+                                       's': 2,
+                                       'pp': 3,
+                                       'socket': 4,
+                                       'pipe': 5,
+                                       'fifo': 6,
+                                       'files': 7}, None, dummy2)))
+    t.add_child(Node(data=(None, {'p': 0,
+                                  'g': 1,
+                                  's': 2,
+                                  'pp': 3,
+                                  'socket': 4,
+                                  'pipe': 5,
+                                  'fifo': 6,
+                                  'files': 7}, None, dummy3)))
+    print(t.S.num)
+    print(t.children[1].S.num)
+    print(id(t.children), id(t.children[1].children))
+
+if __name__ == '__main__':
+    unittest()
