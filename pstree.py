@@ -144,7 +144,7 @@ def get_pstree():
 
     construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct = root)
     root.dfs(action_print, K='p',__noprint__prefix='|- ')
-    return tree
+    return root
 
 
 if __name__ == '__main__':
