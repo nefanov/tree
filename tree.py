@@ -32,7 +32,6 @@ class Node:
             return (chk, current)
         else:
             for node in current.children:
-                print(node.__class__, node)
                 try:
                     (chk, crnt) = node.dfs(action, **kwargs)
                 except Exception as e:

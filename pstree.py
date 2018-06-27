@@ -15,21 +15,9 @@ _base_path = os.getcwd()
 parentdir_of_file = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(parentdir_of_file)
 
-#from grammar.types import *
 
-# process_list
-def process_list():
-    for proc in psutil.process_iter():
-        try:
-            pinfo = proc.as_dict(attrs=['pid', 'name', 'username'])
-        except psutil.NoSuchProcess:
-            pass
-        else:
-            print(pinfo)
-    return pinfo
-
-# print tree recursively
-def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, filler=False, fill_struct=None,  **kwargs):
+# construct tree with attributes recursively
+def construct_tree(node, tree, indent='  ', output_dir='./', permanent = False, filler=False, fill_struct=None,  **kwargs):
     pgid = sid = pid = 1
     fds = []
     try:
@@ -39,7 +27,6 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
         sid = os.getsid(psutil.Process(node).pid)
         fds = []  # list of results from file descriptors
        	fd_procfs = glob.glob('/proc/'+ str(psutil.Process(node).pid) + '/fd/*')
-        print('on_try:ok')
         for line in fd_procfs:
             try:
                 with open('/proc/'+ str(psutil.Process(node).pid) + '/fdinfo/'+ line.split('/')[-1], 'rt+') as finfo:
@@ -95,25 +82,23 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
 
         for it in fds:
             for k,v in it.items():
-                if 'socket' in k.replace(':',' ').replace('[',' ').replace(']',' ').split(' '):
+                if 'socket' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
                     fill_struct.S[fill_struct.I.names['socket']].append('{}_-_{}\n'.format(k,v))
-                elif 'pipe' in k.replace(':',' ').replace('[',' ').replace(']',' ').split(' '):
+                elif 'pipe' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
                     fill_struct.S[fill_struct.I.names['pipe']].append('{}_-_{}\n'.format(k,v))
-                elif 'fifo' in k.replace(':',' ').replace('[',' ').replace(']',' ').split(' '):
+                elif 'fifo' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
                     fill_struct.S[fill_struct.I.names['fifo']].append('{}_-_{}\n'.format(k,v))
                 else:
                     fill_struct.S[fill_struct.I.names['files']].append('{}_-_{}\n'.format(k,v))
     children = tree[node]
 
     if node not in tree:
-        print('ret as disjoint')
+        print('ret as disjoint!')
         return fill_struct
 
 
-    print(children)
     for cnt, child in enumerate(children):
-        sys.stdout.write(indent+'|- ')
-        print('dbglog',psutil.Process(child).pid)
+#        sys.stdout.write(indent+'|- ')
         name = psutil.Process(child).name()
         pgid = os.getpgid(psutil.Process(child).pid)
         pid = psutil.Process(child).pid
@@ -129,11 +114,10 @@ def print_tree(node, tree, indent='  ', output_dir='./', permanent = False, fill
                                        'files': 7}, None, dummy))
 
         fill_struct.add_child(node_entry)
-        print_tree(child, tree, indent+'| ', output_dir, permanent, filler, node_entry)
+        construct_tree(child, tree, indent+'| ', output_dir, permanent, filler, node_entry)
 
 
     return fill_struct
-    print('exited with children', children, 'of', node)
 
 # make pstree as data structure
 # now this is a dict of lists: 'ppid': [pids]
@@ -157,8 +141,8 @@ def get_pstree():
                              'pipe': 5,
                              'fifo': 6,
                              'files': 7}, None, dummy), parent=None)
-    print(root.S.num)
-    print_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct = root)
+
+    construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct = root)
     root.dfs(action_print, K='p')
     return tree
 
