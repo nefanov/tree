@@ -7,6 +7,7 @@ import collections
 import sys
 import os
 import glob
+import pickle
 
 from tree import *
 from atriact import *
@@ -145,6 +146,10 @@ def get_pstree():
     construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct = root)
     root.dfs(action_print, K='p',__noprint__prefix='|- ')
     return root
+
+
+def save_serialized(fn, obj):
+    return pickle.dump(obj,fn)
 
 
 if __name__ == '__main__':
