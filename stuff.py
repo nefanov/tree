@@ -1,6 +1,15 @@
 from enum import Enum
 
 
+class Incrementor:
+    def __init__(self, state=0):
+        self.state = state
+
+    def inc(self, step=1):
+        self.state += step
+        return self.state
+
+
 class FileMode(Enum):
     ORDONLY = 0,
     OWRONLY = 1,

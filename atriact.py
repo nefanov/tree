@@ -1,6 +1,4 @@
 # 'atriact': actions with attributes
-from tree import Node
-
 default_inh={'p': 0,
             'g': 1,
             's': 2,
@@ -47,6 +45,7 @@ class Synth:
 
 
 def check_cf(current, **kwargs):
+    from tree import Node
     if not current.parent: # maybe Init process
         return False, current
 
@@ -78,15 +77,47 @@ def check_cf(current, **kwargs):
         new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
         current.I.act = 'setpgid'+'('+str(new_state.S[new_state.I.names['p']])+')'
         new_state.add_child(current)
-    return (False, current)
+
+        # check cs:
+    elif current.parent.I.act == 'setsid()':##session_picker
+        res, _ = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+        if res:
+            current.parent.children = current.parent.delete_child(current.index)
+            current.parent = current.parent.parent
+            current.parent.add_child(current)
+            if current.S[current.I.names['g']] != current.parent.S[current.parent.I.names['g']]: ##loc_group(noself)
+                resg, root = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+                if resg:
+                    r, _ = root.dfs(action=action_check_attr_eq, name='p', name2='g', val=current.S[current.I.names['g']])
+                    if r:
+                        new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
+                                                                         current.parent.S[current.parent.I.names['g']],
+                                                                         current.parent.S[current.parent.I.names['s']],
+                                                                         current.S[current.I.names['pp']],
+                                                                         current.S[4], current.S[5], current.S[6],
+                                                                         current.S[7]]), parent=current.parent)
+                        current.parent = new_state
+                        new_state.I.act = 'fork' + '(' + str(new_state.S[new_state.I.names['pp']]) + ')'
+                        current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) + ')'
+                        new_state.add_child(current)
+
+    return False, current
 
 
-# action fmt: get atts from tree, return True if cond, else false
+# action fmt: get attrs from tree, return True if cond, else false
 
 def action_check_attr(current, **kwargs):
     if current.S[kwargs.pop('name')] == kwargs.pop('value'):
-        return (True, current)
-    return (False, current)
+        return True, current
+    return False, current
+
+
+def action_check_attr_eq(current, **kwargs):
+    val = kwargs.pop('val')
+    for _, v in kwargs.items():
+        if current.S[current.I.names[v]] != val:
+            return False, current
+    return True, current
 
 
 def action_print(current, **kwargs):
@@ -94,4 +125,4 @@ def action_print(current, **kwargs):
     for k, v in kwargs.items():
         if not '__noprint__' in k:
             print(prefix, current.S.num, current.S[current.I.names[v]])
-    return (False, current)
+    return False, current
