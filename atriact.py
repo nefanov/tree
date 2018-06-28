@@ -111,7 +111,7 @@ def action_check_attr(current, **kwargs):
         return True, current
     return False, current
 
-
+# the most base checker
 def action_check_attr_eq(current, **kwargs):
     val = kwargs.pop('val')
     for _, v in kwargs.items():
