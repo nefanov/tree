@@ -33,7 +33,7 @@ class Parser:
         self.pstree.dfs(action_reconstruct)
         print('Parsed. Printing results:')
         if print_res:
-            self.pstree.dfs(action_print, mode='parsed')
+            self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g',s='s')
         pass
 
     def upward(self):

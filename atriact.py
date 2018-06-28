@@ -118,6 +118,8 @@ def action_reconstruct(current, **kwargs):
                         new_state.I.act = 'fork' + '(' + str(new_state.S[new_state.I.names['pp']]) + ')'
                         current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) + ')'
                         new_state.add_child(current)
+            else:
+                current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
 
     return False, current
 
@@ -141,12 +143,17 @@ def action_check_attr_eq(current, **kwargs):
 
 
 def action_print(current, **kwargs):
+    mode = kwargs.pop('mode')
     prefix = kwargs.pop('__noprint__prefix')
+    s = ''
+    s += prefix
+    if mode == 'parsed':
+        try:
+            s += current.I.act + '-->'
+        except:
+            s += 'Init' + '--> '
     for k, v in kwargs.items():
         if '__noprint__' not in k:
-            try:
-                if kwargs.pop('mode') == 'parsed':
-                    print(prefix, current.I.act, current.S.num, current.S[current.I.names[v]])
-            except:
-                    print(prefix, current.S.num, current.S[current.I.names[v]])
+            s += str(v) + ' = ' + str(current.S[current.I.names[v]]) + '; '
+    print(s)
     return False, current
