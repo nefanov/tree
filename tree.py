@@ -64,6 +64,7 @@ class Node:
     def upbranch(self, action=action_check_attr, **kwargs):
         chk, current = False, self
         while current.parent != None:
+            print(current.S.num[0], current.parent.S.num[0])
             chk, current = action(current, **kwargs)
             if chk:
                 break

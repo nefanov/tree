@@ -84,17 +84,24 @@ def action_reconstruct(current, **kwargs):
         new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
         current.I.act = 'setpgid'+'('+str(new_state.S[new_state.I.names['p']])+')'
         new_state.add_child(current)
-    return False, current
-'''
-        # check cs:
-    elif current.parent.I.act == 'setsid()':##session_picker
+
+    # check cs:
+    # correct_session_picker
+    elif current.parent.I.act == 'setsid()':
+        print('llokop for session')
         res, _ = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+        print('1st upbranch is ended')
         if res:
+            print('res is ok')
             current.parent.children = current.parent.delete_child(current.index)
             current.parent = current.parent.parent
             current.parent.add_child(current)
+            print('all of stuff is performed')
+            # look for group if not id is not suitable
             if current.S[current.I.names['g']] != current.parent.S[current.parent.I.names['g']]: ##loc_group(noself)
+                print('starting upbranch')
                 resg, root = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+                print('upbranch is ok')
                 if resg:
                     r, _ = root.dfs(action=action_check_attr_eq, name='p', name2='g', val=current.S[current.I.names['g']])
                     if r:
@@ -108,11 +115,11 @@ def action_reconstruct(current, **kwargs):
                         new_state.I.act = 'fork' + '(' + str(new_state.S[new_state.I.names['pp']]) + ')'
                         current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) + ')'
                         new_state.add_child(current)
-'''
-#    return False, current
+
+    return False, current
 
 
-# action fmt: get attrs from tree, return True if cond, else false
+# action fmt: get attributes from tree, return True if cond, else false
 
 def action_check_attr(current, **kwargs):
     if current.S[kwargs.pop('name')] == kwargs.pop('value'):
