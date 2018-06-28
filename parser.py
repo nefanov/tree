@@ -3,6 +3,7 @@ from tree import *
 from atriact import *
 import pickle
 
+
 class Parser:
     def __init__(self, from_snapshot=False, in_mem=None, pkl_fn=None):
         if not from_snapshot:
@@ -44,13 +45,13 @@ def unittest(mode='mem'):
     if mode == 'mem':
         dummy = [1, 1, 1, 0, [], [], [], []]
         node_1 = Node(data=(None, {'p': 0,
-                                    'g': 1,
-                                    's': 2,
-                                    'pp': 3,
-                                    'socket': 4,
-                                    'pipe': 5,
-                                    'fifo': 6,
-                                    'files': 7}, None, dummy))
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
         dummy = [2, 2, 2, 1, [], [], [], []]
         node_2 = Node(data=(None, {'p': 0,
                                    'g': 1,
@@ -81,4 +82,4 @@ if __name__ == '__main__':
 
 # tests:
 # 0) 111[211] - passed
-# 1) 111[222[311]] -> 111[fork211[setsid222,fork311]]
+# 1) 111[222[311]] -> 111[fork211[setsid222,fork311]] - under debug

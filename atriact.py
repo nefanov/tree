@@ -45,13 +45,17 @@ class Synth:
 
 
 def action_reconstruct(current, **kwargs):
+    """
+
+    :type current: class Node
+    """
     from tree import Node
     if not current.parent: # maybe Init process
         return False, current
 
     # 2 1 1
     if current.S[current.I.names['g']] == current.parent.S[current.parent.I.names['g']] and \
-        current.S[current.I.names['s']] == current.parent.S[current.parent.I.names['s']]:
+       current.S[current.I.names['s']] == current.parent.S[current.parent.I.names['s']]:
         current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
         if 'check_fds' in kwargs:
             pass
@@ -81,6 +85,7 @@ def action_reconstruct(current, **kwargs):
         current.parent.add_child(new_state)
         current.parent.delete_child(index=current.index)
         current.parent = new_state
+
         new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
         current.I.act = 'setpgid'+'('+str(new_state.S[new_state.I.names['p']])+')'
         new_state.add_child(current)
@@ -88,15 +93,13 @@ def action_reconstruct(current, **kwargs):
     # check cs:
     # correct_session_picker
     elif current.parent.I.act == 'setsid()':
-        print('llokop for session')
         res, _ = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
-        print('1st upbranch is ended')
         if res:
-            print('res is ok')
             current.parent.children = current.parent.delete_child(current.index)
             current.parent = current.parent.parent
+            current.parent.delete_child(current.index) # redundancy - needs dynamic refilling of children list!
             current.parent.add_child(current)
-            print('all of stuff is performed')
+
             # look for group if not id is not suitable
             if current.S[current.I.names['g']] != current.parent.S[current.parent.I.names['g']]: ##loc_group(noself)
                 print('starting upbranch')
@@ -132,6 +135,7 @@ def action_check_attr_eq(current, **kwargs):
     val = kwargs.pop('val')
     for _, v in kwargs.items():
         if current.S[current.I.names[v]] != val:
+            print('DBG>>','index=', current.I.names[v], 'value=',current.S[current.I.names[v]],'chkval=', val)
             return False, current
     return True, current
 
