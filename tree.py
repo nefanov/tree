@@ -37,8 +37,6 @@ class Node:
                     del self.children[i]
         return self.children
 
-
-
     # search routines
 
     # recursive dfs
