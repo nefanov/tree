@@ -31,9 +31,10 @@ class Parser:
 
     def downward(self, print_res=False):
         if print_res:
-            self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='start', p='p', g='g',s='s')
+            self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='start', p='p', g='g', s='s')
+        print('---------------------------Start parsing---------------------------------')
         self.pstree.dfs(action_reconstruct)
-        print('Parsed. Printing results:')
+        print('-------------------------------Parsed. Printing results:------------------------------------------------')
         if print_res:
             self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g',s='s')
 
@@ -45,6 +46,15 @@ class Parser:
 
 def unittest(mode='mem'):
     if mode == 'mem':
+        dummy = [0, 0, 0, 0, [], [], [], []]
+        node_0 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
         dummy = [1, 1, 1, 0, [], [], [], []]
         node_1 = Node(data=(None, {'p': 0,
                                    'g': 1,
@@ -73,7 +83,7 @@ def unittest(mode='mem'):
                                    'fifo': 6,
                                    'files': 7}, None, dummy))
 
-        dummy = [4, 1, 1, 1, [], [], [], []]
+        dummy = [4, 4, 4, 1, [], [], [], []]
         node_4 = Node(data=(None, {'p': 0,
                                    'g': 1,
                                    's': 2,
@@ -97,6 +107,7 @@ def unittest(mode='mem'):
         node_1.add_child(node_4)
         node_2.add_child(node_3)
         node_2.add_child(node_5)
+        node_0.add_child(node_1)
         p = Parser(from_snapshot=True, in_mem=node_1)
 
         p.downward(True)

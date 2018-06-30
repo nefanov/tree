@@ -1,3 +1,4 @@
+import copy
 # 'atriact': actions with attributes
 default_inh={'p': 0,
              'g': 1,
@@ -32,7 +33,7 @@ class Inh:
 
 class Synth:
     def __init__(self, values=[]):
-        self.num = values
+        self.num = copy.copy(values)
 
     def __getitem__(self, key):
         return self.num[key]
@@ -56,9 +57,9 @@ def action_reconstruct(current, **kwargs):
     if not current.parent: # maybe Init process
         return False, current
     try:
-        print('lookee of:', current.index, current.S)
-    except:
-        print('no print')
+        print('I am in:', current.index, current.S)
+    except Exception as e:
+        print(e, ':no print:', current.index, current.S.num)
     # 2 1 1
     if current.S[current.I.names['g']] == current.parent.S[current.parent.I.names['g']] and \
        current.S[current.I.names['s']] == current.parent.S[current.parent.I.names['s']]:
@@ -107,7 +108,7 @@ def action_reconstruct(current, **kwargs):
             current.parent = current.parent.parent
             current.parent.delete_child(current.index) # redundancy - needs dynamic refilling of children list!
             current.parent.add_child(current)
-            '''
+
             # look for group if not id is not suitable
             if current.S[current.I.names['g']] != current.parent.S[current.parent.I.names['g']]: ##loc_group(noself)
                 print('starting upbranch')
@@ -129,8 +130,8 @@ def action_reconstruct(current, **kwargs):
                         current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) +';' + str(current.S[current.I.names['g']])+ ')'
                         new_state.add_child(current)
             else:
-            '''
-            current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
+
+                current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
 
     return False, current
 

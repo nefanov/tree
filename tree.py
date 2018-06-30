@@ -51,11 +51,16 @@ class Node:
         else:
             if '__noprint__prefix' in kwargs:
                 kwargs['__noprint__prefix'] = '| '+kwargs['__noprint__prefix']
-            for node in current.children:
-                try:
-                    (chk, crnt) = node.dfs(action, **kwargs)
-                except Exception as e:
-                    print(e,'\n')
+            if len(current.children) > 0:
+                for node in current.children:
+                    if not node:
+                        print('dfdd',node)
+                        continue
+                    try:
+#                        print('check child:', node.S)
+                        (chk, crnt) = node.dfs(action, **kwargs)
+                    except Exception as e:
+                        print('Exeption:', e, '\n')
                 if chk:
                     return chk, crnt  # ret from recursion
 
@@ -64,10 +69,6 @@ class Node:
     def upbranch(self, action=action_check_attr, **kwargs):
         chk, current = False, self
         while current != None:
-            try:
-                print(current.S.num[0], current.parent.S.num[0])
-            except:
-                print('maybe root!')
             chk, current = action(current, **kwargs)
             if chk:
                 break
