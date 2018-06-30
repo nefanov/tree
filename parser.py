@@ -83,7 +83,7 @@ def unittest(mode='mem'):
                                    'fifo': 6,
                                    'files': 7}, None, dummy))
 
-        dummy = [5, 1, 1, 1, [], [], [], []]
+        dummy = [5, 2, 2, 2, [], [], [], []]
         node_5 = Node(data=(None, {'p': 0,
                                    'g': 1,
                                    's': 2,
@@ -96,7 +96,7 @@ def unittest(mode='mem'):
         node_1.add_child(node_2)
         node_1.add_child(node_4)
         node_2.add_child(node_3)
-        node_4.add_child(node_5)
+        node_2.add_child(node_5)
         p = Parser(from_snapshot=True, in_mem=node_1)
 
         p.downward(True)

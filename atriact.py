@@ -100,7 +100,8 @@ def action_reconstruct(current, **kwargs):
     # check cs:
     # correct_session_picker
     elif current.parent.I.act == 'setsid()':
-        res, _ = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+        # triple - see article - up of current's parent is reconstructed, which parent is target value
+        res, _ = current.parent.parent.parent.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
         if res:
             current.parent.children = current.parent.delete_child(current.index)
             current.parent = current.parent.parent
