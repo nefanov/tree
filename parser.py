@@ -30,6 +30,8 @@ class Parser:
         self.pstree = get_pstree()
 
     def downward(self, print_res=False):
+        if print_res:
+            self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='start', p='p', g='g',s='s')
         self.pstree.dfs(action_reconstruct)
         print('Parsed. Printing results:')
         if print_res:
@@ -70,8 +72,31 @@ def unittest(mode='mem'):
                                    'pipe': 5,
                                    'fifo': 6,
                                    'files': 7}, None, dummy))
+
+        dummy = [4, 1, 1, 1, [], [], [], []]
+        node_4 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+
+        dummy = [5, 1, 1, 1, [], [], [], []]
+        node_5 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+
         node_1.add_child(node_2)
+        node_1.add_child(node_4)
         node_2.add_child(node_3)
+        node_4.add_child(node_5)
         p = Parser(from_snapshot=True, in_mem=node_1)
 
         p.downward(True)

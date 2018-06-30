@@ -7,8 +7,8 @@ from stuff import Incrementor
 default_inc = Incrementor()
 
 class Node:
-    def __init__(self, data=(None, None, None, []), parent=None):
-
+    def __init__(self, data=(None, None, None, []), parent=None, visited=False):
+        self.visited = visited
         self.parent = parent
         self.children = []
         self.I = Inh()
@@ -50,7 +50,7 @@ class Node:
             return (chk, current)
         else:
             if '__noprint__prefix' in kwargs:
-                kwargs['__noprint__prefix'] += '|- '
+                kwargs['__noprint__prefix'] = '| '+kwargs['__noprint__prefix']
             for node in current.children:
                 try:
                     (chk, crnt) = node.dfs(action, **kwargs)
@@ -112,6 +112,7 @@ def unittest():
     dummy = [1, 2, 3, 4, [], [], [], []]
     dummy2 = [5, 6, 7, 8, [], [], [], []]
     dummy3 = [9, 10, 11, 12, [], [], [], []]
+
     t = Node(data=(None, {'p': 0,
                                        'g': 1,
                                        's': 2,

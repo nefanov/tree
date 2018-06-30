@@ -45,6 +45,9 @@ class Synth:
 
 
 def action_reconstruct(current, **kwargs):
+    if current.visited:
+        return False, current
+    current.visited = True
     """
 
     :type current: class Node
@@ -52,7 +55,10 @@ def action_reconstruct(current, **kwargs):
     from tree import Node
     if not current.parent: # maybe Init process
         return False, current
-
+    try:
+        print('lookee of:', current.index, current.S)
+    except:
+        print('no print')
     # 2 1 1
     if current.S[current.I.names['g']] == current.parent.S[current.parent.I.names['g']] and \
        current.S[current.I.names['s']] == current.parent.S[current.parent.I.names['s']]:
@@ -66,16 +72,17 @@ def action_reconstruct(current, **kwargs):
                                     current.parent.S[current.parent.I.names['g']],
                                     current.parent.S[current.parent.I.names['s']],
                                     current.S[current.I.names['pp']],
-                                    current.S[4], current.S[5], current.S[6], current.S[7]]), parent=current.parent)
+                                    current.S[4], current.S[5], current.S[6], current.S[7]]), parent=current.parent, visited=True)
         current.parent.add_child(new_state)
         current.parent.delete_child(index=current.index)
+        new_state.parent = current.parent
         current.parent = new_state
         new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
         current.I.act = 'setsid()'
         new_state.add_child(current)
 
     # 1 2 1
-    elif current.S[current.I.names['p']] == current.S[current.I.names['g']] != current.S[current.I.names['s']]:
+    if current.S[current.I.names['p']] == current.S[current.I.names['g']] and current.S[current.I.names['g']] != current.S[current.I.names['s']]:
         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                     current.parent.S[current.parent.I.names['g']],
                                     current.parent.S[current.parent.I.names['s']],
@@ -84,10 +91,10 @@ def action_reconstruct(current, **kwargs):
 
         current.parent.add_child(new_state)
         current.parent.delete_child(index=current.index)
-        current.parent = new_state
+#        current.parent = new_state
 
         new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
-        current.I.act = 'setpgid'+'('+str(new_state.S[new_state.I.names['p']])+')'
+        current.I.act = 'setpgid'+'(self:'+str(new_state.S[new_state.I.names['p']])+')'
         new_state.add_child(current)
 
     # check cs:
@@ -99,7 +106,7 @@ def action_reconstruct(current, **kwargs):
             current.parent = current.parent.parent
             current.parent.delete_child(current.index) # redundancy - needs dynamic refilling of children list!
             current.parent.add_child(current)
-
+            '''
             # look for group if not id is not suitable
             if current.S[current.I.names['g']] != current.parent.S[current.parent.I.names['g']]: ##loc_group(noself)
                 print('starting upbranch')
@@ -114,12 +121,15 @@ def action_reconstruct(current, **kwargs):
                                                                          current.S[current.I.names['pp']],
                                                                          current.S[4], current.S[5], current.S[6],
                                                                          current.S[7]]), parent=current.parent)
+                        current.parent.add_child(new_state)
+                        current.parent.delete_child(index=current.index)
                         current.parent = new_state
                         new_state.I.act = 'fork' + '(' + str(new_state.S[new_state.I.names['pp']]) + ')'
-                        current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) + ')'
+                        current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) +';' + str(current.S[current.I.names['g']])+ ')'
                         new_state.add_child(current)
             else:
-                current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
+            '''
+            current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
 
     return False, current
 
@@ -137,7 +147,6 @@ def action_check_attr_eq(current, **kwargs):
     val = kwargs.pop('val')
     for _, v in kwargs.items():
         if current.S[current.I.names[v]] != val:
-            print('DBG>>','index=', current.I.names[v], 'value=',current.S[current.I.names[v]],'chkval=', val)
             return False, current
     return True, current
 
@@ -146,7 +155,7 @@ def action_print(current, **kwargs):
     mode = kwargs.pop('mode')
     prefix = kwargs.pop('__noprint__prefix')
     s = ''
-    s += prefix
+    s += prefix + str(current.index)+':'
     if mode == 'parsed':
         try:
             s += current.I.act + '-->'
