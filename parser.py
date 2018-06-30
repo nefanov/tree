@@ -36,7 +36,7 @@ class Parser:
         print('Parsed. Printing results:')
         if print_res:
             self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g',s='s')
-        pass
+
 
     def upward(self):
         # now no need upward because of tree hierarchy and attributes checking on tree construction

@@ -66,7 +66,7 @@ def action_reconstruct(current, **kwargs):
         if 'check_fds' in kwargs:
             pass
 
-    # 1 1 1
+    # 2 2 2
     elif current.S[current.I.names['p']] == current.S[current.I.names['g']] == current.S[current.I.names['s']]:
         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                     current.parent.S[current.parent.I.names['g']],
