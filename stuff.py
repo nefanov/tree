@@ -1,10 +1,10 @@
 from enum import Enum
 import copy
 
+stack = []
 # deep copy wrapper for recursive copy dynamic structures (recursive nodes, trees, etc)
 def copy_instance(obj):
     return copy.deepcopy(obj)
-
 
 class Incrementor:
     def __init__(self, state=0):

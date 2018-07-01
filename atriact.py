@@ -28,7 +28,7 @@ class Inh:
         try:
             print(self.act)
         except:
-            print('No syscall recognised')
+            print('No syscall recognized')
 
 
 class Synth:
@@ -46,21 +46,22 @@ class Synth:
 
 
 def action_reconstruct(current, **kwargs):
+
     if current.visited:
         return False, current
     current.visited = True
+
     """
 
     :type current: class Node
     """
+
     from tree import Node
     if not current.parent: # maybe Init process
         return False, current
-    try:
-        print('I am in:', current.index, current.S)
-    except Exception as e:
-        print(e, ':no print:', current.index, current.S.num)
+
     # 2 1 1
+
     if current.S[current.I.names['g']] == current.parent.S[current.parent.I.names['g']] and \
        current.S[current.I.names['s']] == current.parent.S[current.parent.I.names['s']]:
         current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
@@ -68,6 +69,7 @@ def action_reconstruct(current, **kwargs):
             pass
 
     # 2 2 2
+    
     elif current.S[current.I.names['p']] == current.S[current.I.names['g']] == current.S[current.I.names['s']]:
         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                     current.parent.S[current.parent.I.names['g']],
@@ -92,7 +94,7 @@ def action_reconstruct(current, **kwargs):
 
         current.parent.add_child(new_state)
         current.parent.delete_child(index=current.index)
-#        current.parent = new_state
+        current.parent = new_state
 
         new_state.I.act = 'fork'+'('+str(new_state.S[new_state.I.names['pp']])+')'
         current.I.act = 'setpgid'+'(self:'+str(new_state.S[new_state.I.names['p']])+')'
@@ -137,6 +139,9 @@ def action_reconstruct(current, **kwargs):
 
 
 # action fmt: get attributes from tree, return True if cond, else false
+
+def action_stub(current, **kwargs):
+    return False, current
 
 def action_check_attr(current, **kwargs):
     if current.S[kwargs.pop('name')] == kwargs.pop('value'):

@@ -6,6 +6,7 @@ from stuff import Incrementor
 
 default_inc = Incrementor()
 
+
 class Node:
     def __init__(self, data=(None, None, None, []), parent=None, visited=False):
         self.visited = visited
@@ -24,6 +25,9 @@ class Node:
     def set_parent(self, parent):
         self.parent = parent
         return self
+
+    def __repr__(self):
+        print(self.index, self.S.num)
 
     def delete_child(self, index=None, sig=None):  # delete the state;
         if not index:
@@ -51,18 +55,11 @@ class Node:
         else:
             if '__noprint__prefix' in kwargs:
                 kwargs['__noprint__prefix'] = '| '+kwargs['__noprint__prefix']
-            if len(current.children) > 0:
-                for node in current.children:
-                    if not node:
-                        print('dfdd',node)
-                        continue
-                    try:
-#                        print('check child:', node.S)
-                        (chk, crnt) = node.dfs(action, **kwargs)
-                    except Exception as e:
-                        print('Exeption:', e, '\n')
-                if chk:
-                    return chk, crnt  # ret from recursion
+            ch = current.children[:]
+            for en, node in enumerate(ch):
+                (chk, crnt) = node.dfs(action, **kwargs)
+
+            return chk, crnt  # ret from recursion
 
     # upward branch checking from current node to some global root
 
@@ -75,7 +72,7 @@ class Node:
             current = current.parent
         return chk, current
 
-
+'''
 class Tree:  # represents a tree/subtree
     def __init__(self, root=Node()):
         self.root = root
@@ -107,7 +104,7 @@ class Tree:  # represents a tree/subtree
             chk, current = action(current, **kwargs)
             current = current.parent
         return
-
+'''
 
 def unittest():
     dummy = [1, 2, 3, 4, [], [], [], []]
@@ -141,6 +138,7 @@ def unittest():
     print(t.S.num)
     print(t.children[1].S.num)
     print(id(t.children), id(t.children[1].children))
+
 
 if __name__ == '__main__':
     unittest()
