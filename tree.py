@@ -45,6 +45,7 @@ class Node:
 
     # recursive dfs
     def dfs(self, action=action_check_attr, **kwargs):
+        tracer = False
         current = self
         chk, current = action(current, **kwargs)
         if chk:
@@ -58,6 +59,10 @@ class Node:
             ch = current.children[:]
             for en, node in enumerate(ch):
                 (chk, crnt) = node.dfs(action, **kwargs)
+                if chk == True:
+                    tracer = chk
+                    return tracer, crnt
+
 
             return chk, crnt  # ret from recursion
 

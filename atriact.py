@@ -119,6 +119,7 @@ def action_reconstruct(current, **kwargs):
                 if resg:
                     r, _ = root.dfs(action=action_check_attr_eq, name='p', name2='g', val=current.S[current.I.names['g']])
                     if r:
+                        print('fix it here!')
                         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                                                          current.parent.S[current.parent.I.names['g']],
                                                                          current.parent.S[current.parent.I.names['s']],
