@@ -191,7 +191,7 @@ def unittest(mode='mem'):
                                    'fifo': 6,
                                    'files': 7}, None, dummy))
 
-        dummy = [4, 4, 4, 1, [], [], [], []]
+        dummy = [4, 4, 1, 1, [], [], [], []]
         node_4 = Node(data=(None, {'p': 0,
                                    'g': 1,
                                    's': 2,
@@ -221,7 +221,7 @@ def unittest(mode='mem'):
                                    'fifo': 6,
                                    'files': 7}, None, dummy))
 
-        dummy = [7, 1, 1, 4, [], [], [], []]
+        dummy = [7, 4, 1, 4, [], [], [], []]
         node_7 = Node(data=(None, {'p': 0,
                                    'g': 1,
                                    's': 2,
