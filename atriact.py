@@ -69,7 +69,7 @@ def action_reconstruct(current, **kwargs):
             pass
 
     # 2 2 2
-    
+    # setsid
     elif current.S[current.I.names['p']] == current.S[current.I.names['g']] == current.S[current.I.names['s']]:
         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                     current.parent.S[current.parent.I.names['g']],
@@ -85,7 +85,9 @@ def action_reconstruct(current, **kwargs):
         new_state.add_child(current)
 
     # 1 2 1
-    if current.S[current.I.names['p']] == current.S[current.I.names['g']] and current.S[current.I.names['g']] != current.S[current.I.names['s']]:
+    # setsid(self)
+    if current.S[current.I.names['p']] == current.S[current.I.names['g']] and \
+            current.S[current.I.names['g']] != current.S[current.I.names['s']]:
         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                     current.parent.S[current.parent.I.names['g']],
                                     current.parent.S[current.parent.I.names['s']],
@@ -102,9 +104,14 @@ def action_reconstruct(current, **kwargs):
 
     # check cs:
     # correct_session_picker
-    elif current.parent.I.act == 'setsid()':
+    else:
+        res = False
+        if current.parent.I.act == 'setsid()':
         # triple - see article - up of current's parent is reconstructed, which parent is target value
-        res, _ = current.parent.parent.parent.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+            res, _ = current.parent.parent.parent.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
+        elif 'setpgid' in current.parent.I.act:
+            res, _ = current.parent.parent.parent.upbranch(action=action_check_attr_eq, name='p',
+                                                           val=current.S[current.I.names['s']])
         if res:
             current.parent.children = current.parent.delete_child(current.index)
             current.parent = current.parent.parent
@@ -117,9 +124,10 @@ def action_reconstruct(current, **kwargs):
                 resg, root = current.upbranch(action=action_check_attr_eq, name='p', val=current.S[current.I.names['s']])
                 print('upbranch is ok')
                 if resg:
+                    print('resg')
                     r, _ = root.dfs(action=action_check_attr_eq, name='p', name2='g', val=current.S[current.I.names['g']])
                     if r:
-                        print('fix it here!')
+                        print('recons')
                         new_state = Node(data=(None, default_inh, None, [current.S[current.I.names['p']],
                                                                          current.parent.S[current.parent.I.names['g']],
                                                                          current.parent.S[current.parent.I.names['s']],
@@ -132,8 +140,9 @@ def action_reconstruct(current, **kwargs):
                         new_state.I.act = 'fork' + '(' + str(new_state.S[new_state.I.names['pp']]) + ')'
                         current.I.act = 'setpgid' + '(' + str(new_state.S[new_state.I.names['p']]) +';' + str(current.S[current.I.names['g']])+ ')'
                         new_state.add_child(current)
-            else:
 
+            else:
+                print('forku')
                 current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
 
     return False, current
