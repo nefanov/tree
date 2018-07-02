@@ -1,5 +1,5 @@
 1) Fix Issue #2
-2) <strike>Test with interior setpgid </strike>
+2) [fixed] with interior setpgid
 3) Explore the exit() reparent problem
 4) construct examples & tests for 1) a lot of exit() 2) pipe reconstruction
 5) Investigate the robustness
