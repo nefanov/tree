@@ -143,7 +143,7 @@ def action_reconstruct(current, **kwargs):
 
             else:
                 print('forku')
-                current.I.act = 'fork' + '(' + str(current.S[current.I.names['pp']]) + ')'
+                current.I.act = 'fork' + ' (' + str(current.S[current.I.names['pp']]) + ')'
 
     return False, current
 

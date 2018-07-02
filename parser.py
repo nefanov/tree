@@ -4,6 +4,10 @@ from atriact import *
 import pickle
 
 
+def print_tree(root):
+    root.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g',s='s')
+
+
 class Parser:
     def __init__(self, from_snapshot=False, in_mem=None, pkl_fn=None):
         if not from_snapshot:
@@ -28,9 +32,6 @@ class Parser:
 
     def update_pstree(self):
         self.pstree = get_pstree()
-
-    def print_tree(self, root):
-        root.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g',s='s')
 
     def downward(self, print_res=False):
         if print_res:
