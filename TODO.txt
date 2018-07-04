@@ -3,3 +3,5 @@
 3) Explore the exit() reparent problem
 4) construct examples & tests for 1) a lot of exit() 2) pipe reconstruction
 5) Investigate the robustness
+
+6) Исследовать проблему в MCS-формализмах. Мотивация: поддержка семантики на уровне синтаксиса.
