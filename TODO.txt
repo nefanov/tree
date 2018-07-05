@@ -1,12 +1,12 @@
 1) [fixed] Fix Issue #2
 2) [fixed] with interior setpgid
-3) Explore the exit() reparent problem
+3) [fixed] Explore the exit() reparent problem
 4) construct examples & tests for 1) a lot of exit() 2) pipe reconstruction
 5) Investigate the robustness
+6) tree string notation to analyser
+7) Исследовать проблему в MCS-формализмах. Мотивация: поддержка семантики на уровне синтаксиса.
 
-6) Исследовать проблему в MCS-формализмах. Мотивация: поддержка семантики на уровне синтаксиса.
-
-На SEC(R):
+8)На SEC(R):
 - Добавить exit
 - сделать окружение для фуззеров
 - сделать нормальное считывание из строки (sec(r)-2017)
