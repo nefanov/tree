@@ -8,7 +8,7 @@ import sys
 import os
 import glob
 import pickle
-
+from stuff import Common_container, SG_container
 from tree import *
 from atriact import *
 
@@ -18,7 +18,8 @@ sys.path.append(parentdir_of_file)
 
 
 # construct tree with attributes recursively
-def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, filler=False, fill_struct=None, **kwargs):
+def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, filler=False, fill_struct=None,
+                   fs=False, use_cache=False, **kwargs):
     pgid = sid = pid = 1
     fds = []
     try:
@@ -27,50 +28,54 @@ def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, fi
         pid = psutil.Process(node).pid
         sid = os.getsid(psutil.Process(node).pid)
         fds = []  # list of results from file descriptors
-        fd_procfs = glob.glob('/proc/' + str(psutil.Process(node).pid) + '/fd/*')
-        for line in fd_procfs:
-            try:
-                with open('/proc/' + str(psutil.Process(node).pid) + '/fdinfo/' + line.split('/')[-1], 'rt+') as finfo:
-                    liner = False
-                    for l in finfo:
-                        if l.split(':')[0] == 'flags':
-                            val = l.replace(':', ' ').replace('\t', ' ').split(' ')[-1].replace('\n', '')
-                            fds.append({os.path.realpath(line): val})
-                            liner = True
-                    if liner == False:
-                        fds.append({os.path.realpath(line): 'n/a'})
+        if fs:
+            fd_procfs = glob.glob('/proc/' + str(psutil.Process(node).pid) + '/fd/*')
+            for line in fd_procfs:
+                try:
+                    with open('/proc/' + str(psutil.Process(node).pid) + '/fdinfo/' + line.split('/')[-1], 'rt+') as finfo:
+                        liner = False
+                        for l in finfo:
+                            if l.split(':')[0] == 'flags':
+                                val = l.replace(':', ' ').replace('\t', ' ').split(' ')[-1].replace('\n', '')
+                                fds.append({os.path.realpath(line): val})
+                                liner = True
+                        if liner == False:
+                            fds.append({os.path.realpath(line): 'n/a'})
 
-            except Exception as e:
-                print(e)
-                fds.append({os.path.realpath(line): 'n/a'})
+                except Exception as e:
+                    print(e)
+                    fds.append({os.path.realpath(line): 'n/a'})
 
     except psutil.Error:
         name = "?"
     print(name, node, sid, pgid)
 
     # write additional resources , like fds, into fs
-    if permanent:
-        if not os.path.exists(output_dir + str(pid)):
-            os.makedirs(output_dir + str(pid))
-        files = open(output_dir + str(pid) + '/files.pstree', 'w+')
-        sockets = open(output_dir + str(pid) + '/sockets.pstree', 'w+')
-        pipes = open(output_dir + str(pid) + '/pipes.pstree', 'w+')
-        fifos = open(output_dir + str(pid) + '/fifos.pstree', 'w+')
+    if fs:
+        if permanent:
+            if not os.path.exists(output_dir + str(pid)):
+                os.makedirs(output_dir + str(pid))
+            files = open(output_dir + str(pid) + '/files.pstree', 'w+')
+            sockets = open(output_dir + str(pid) + '/sockets.pstree', 'w+')
+            pipes = open(output_dir + str(pid) + '/pipes.pstree', 'w+')
+            fifos = open(output_dir + str(pid) + '/fifos.pstree', 'w+')
 
-        for it in fds:
-            for k, v in it.items():
-                if 'socket' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
-                    sockets.write('{}_-_{}\n'.format(k, v))
-                elif 'pipe' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
-                    pipes.write('{}_-_{}\n'.format(k, v))
-                elif 'fifo' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
-                    fifos.write('{}_-_{}\n'.format(k, v))
-                else:
-                    files.write('{}_-_{}\n'.format(k, v))
-        files.close()
-        sockets.close()
-        pipes.close()
-        fifos.close()
+            for it in fds:
+                for k, v in it.items():
+                    if 'socket' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
+                        sockets.write('{}_-_{}\n'.format(k, v))
+                    elif 'pipe' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
+                        pipes.write('{}_-_{}\n'.format(k, v))
+                    elif 'fifo' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
+                        fifos.write('{}_-_{}\n'.format(k, v))
+                    else:
+                        files.write('{}_-_{}\n'.format(k, v))
+            files.close()
+            sockets.close()
+            pipes.close()
+            fifos.close()
+
+
 
     if fill_struct and filler:
         fill_struct.S.num[fill_struct.I.names['p']] = pid
@@ -84,13 +89,24 @@ def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, fi
         for it in fds:
             for k, v in it.items():
                 if 'socket' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
-                    fill_struct.S[fill_struct.I.names['socket']].append('{}_-_{}\n'.format(k, v))
+                    fill_struct.S.num[fill_struct.I.names['socket']].append({k, v})
                 elif 'pipe' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
-                    fill_struct.S[fill_struct.I.names['pipe']].append('{}_-_{}\n'.format(k, v))
+                    fill_struct.S.num[fill_struct.I.names['pipe']].append({k, v})
                 elif 'fifo' in k.replace(':', ' ').replace('[', ' ').replace(']', ' ').split(' '):
-                    fill_struct.S[fill_struct.I.names['fifo']].append('{}_-_{}\n'.format(k, v))
+                    fill_struct.S.num[fill_struct.I.names['fifo']].append({k, v})
                 else:
-                    fill_struct.S[fill_struct.I.names['files']].append('{}_-_{}\n'.format(k, v))
+                    fill_struct.S.num[fill_struct.I.names['files']].append({k, v})
+
+        if use_cache:
+            if not kwargs['P_container']:
+                kwargs['P_container'] = Common_container()
+            if not kwargs['SPG_container']:
+                kwargs['SPG_container'] = SG_container()
+            kwargs['P_container'].add(pid)
+            if sid not in kwargs['SPG_container'].keys():
+                kwargs['SPG_container'][sid] = Common_container
+            kwargs['SPG_container'][sid].add(pgid)
+
     children = tree[node]
 
     if node not in tree:
@@ -113,14 +129,14 @@ def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, fi
                                        'files': 7}, None, dummy))
 
         fill_struct.add_child(node_entry)
-        construct_tree(child, tree, indent + '| ', output_dir, permanent, filler, node_entry)
+        construct_tree(child, tree, indent + '| ', output_dir, permanent, filler, node_entry, use_cache, **kwargs)
 
     return fill_struct
 
 
 # make pstree as data structure
 # now this is a dict of lists: 'ppid': [pids]
-def get_pstree():
+def get_pstree(use_cache=False, permanent=False, **kwargs):
     tree = collections.defaultdict(list)
     for p in psutil.process_iter():
         try:
@@ -141,8 +157,9 @@ def get_pstree():
                              'fifo': 6,
                              'files': 7}, None, dummy), parent=None)
 
-    construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct=root)
-    root.dfs(action_print, K='p', __noprint__prefix='|- ')
+    construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct=root, use_cache=use_cache,
+                   **kwargs)
+    root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print')
     return root
 
 
@@ -151,4 +168,6 @@ def save_serialized(fn, obj):
 
 
 if __name__ == '__main__':
-    get_pstree()
+    # if need, pass caches and other stuff into kwargs
+    get_pstree(SPG_container=None, P_container=None)
+

@@ -50,7 +50,9 @@ def action_reconstruct(current, **kwargs):
     if current.visited:
         return False, current
     current.visited = True
-
+    handle_exits = kwargs.get('handle_exits', True)
+    if current.S[current.I.names['p']] == 1:
+        return False, current
     """
 
     :type current: class Node
@@ -104,6 +106,97 @@ def action_reconstruct(current, **kwargs):
 
     # check cs:
     # correct_session_picker
+    # pass this elif or not - think after sleep :)
+    elif handle_exits and current.parent.S[current.parent.I.names['p']] == 1:
+        res = False
+        current.parent.delete_child(current.index)
+        # see the tree in previous articles
+        res, target = current.parent.dfs(action=action_check_attr_eq, name='g', val=current.S[current.I.names['g']]) # if Ex group
+        if res:
+            res, target = current.parent.dfs(action=action_check_attr_eq, name='s', val=current.S[current.I.names['s']])
+            if res:
+                node = Node(data=(None, default_inh, 'fork('+str(target.S[target.I.names['p']])+'),exit()',
+                                    [current.S[current.I.names['p']], # refill this
+                                    current.S[current.I.names['g']],
+                                    current.S[current.I.names['s']],
+                                    target.S[target.I.names['p']],
+                                    current.S[4], current.S[5], current.S[6], current.S[7]]), parent=target, visited=True)
+                target.add_child(node)
+                current.parent.delete_child(current.index)
+                node.add_child(current)
+                #current.parent = node
+                current.S[current.I.names['pp']] = current.parent.S[current.parent.I.names['p']]
+                current.I.act = 'fork'+'('+str(current.parent.S[current.I.names['pp']])+')'
+            else:
+                print('parsing error')
+                import sys
+                sys.exit(-1)
+        else:
+            res, target = current.parent.dfs(action=action_check_attr_eq, name='s',
+                                      val=current.S[current.I.names['s']])  # if Ex session
+            if res:
+                node_par = Node(data=(None, default_inh, 'fork(' + str(target.S[target.I.names['p']]) + ')',
+                                  [current.S[current.I.names['g']],  # refill this
+                                   current.S[target.I.names['g']],
+                                   current.S[target.I.names['s']],
+                                   target.S[target.I.names['p']],
+                                   current.S[4], current.S[5], current.S[6], current.S[7]]), parent=current.parent,
+                            visited=True)
+                node_ch = Node(data=(None, default_inh, 'setpgid(' + str(current.S[current.I.names['g']]) + '),exit()',
+                                      [current.S[current.I.names['g']],  # refill this
+                                       current.S[current.I.names['g']],
+                                       current.S[target.I.names['s']],
+                                       target.S[node_par.I.names['p']],
+                                       current.S[4], current.S[5], current.S[6], current.S[7]]), parent=node_par,
+                                visited=True)
+                node_par.add_child(node_ch)
+                target.add_child(node_par)
+                current.parent.delete_child(current.index)
+                node_ch.add_child(current)
+                current.S[current.I.names['pp']] = current.parent.S[current.parent.I.names['p']]
+            else:
+                node_par = Node(data=(None, default_inh, 'fork(' + str(current.parent.S[current.parent.I.names['p']]) + ')',
+                                      [current.S[current.I.names['s']],  # refill this
+                                       current.parent.S[current.parent.I.names['g']],
+                                       current.parent.S[current.parent.I.names['s']],
+                                       current.parent.S[current.parent.I.names['p']],
+                                       current.S[4], current.S[5], current.S[6], current.S[7]]), parent=current.parent,
+                                visited=True)
+                node_ch = Node(
+                    data=(None, default_inh, 'setsid(), exit()',
+                          [current.S[current.I.names['s']],
+                           current.S[current.I.names['s']],
+                           current.S[current.I.names['s']],
+                           node_par.S[node_par.I.names['p']],
+                           current.S[4], current.S[5], current.S[6], current.S[7]]), parent=node_par,
+                    visited=True)
+
+                node_br = Node(
+                    data=(None, default_inh,'fork(' + str(node_ch.S[node_ch.I.names['p']]) + ')',
+                          [current.S[current.I.names['g']],
+                           current.S[current.I.names['s']],
+                           current.S[current.I.names['s']],
+                           node_ch.S[node_ch.I.names['p']],
+                           current.S[4], current.S[5], current.S[6], current.S[7]]), parent=node_ch,
+                    visited=True)
+
+                node_br2 = Node(
+                    data=(None, default_inh, 'setpgid(self,' + str(current.S[current.I.names['g']]) + '), exit()',
+                          [current.S[current.I.names['g']],
+                           current.S[current.I.names['g']],
+                           current.S[current.I.names['s']],
+                           node_br.S[node_br.I.names['p']],
+                           current.S[4], current.S[5], current.S[6], current.S[7]]), parent=node_br,
+                    visited=True)
+
+                node_par.add_child(node_ch)
+                current.parent.add_child(node_par)
+                current.parent.delete_child(current.index)
+                node_ch.add_child(node_br)
+                node_br.add_child(node_br2)
+                node_br2.add_child(current)
+                current.S[current.I.names['pp']] = node_ch.S[node_ch.I.names['p']]
+
     else:
         res = False
         if current.parent.I.act == 'setsid()':
@@ -144,6 +237,7 @@ def action_reconstruct(current, **kwargs):
             else:
                 print('forku')
                 current.I.act = 'fork' + ' (' + str(current.S[current.I.names['pp']]) + ')'
+
 
     return False, current
 

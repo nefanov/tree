@@ -48,6 +48,99 @@ class Parser:
         # now no need upward because of tree hierarchy and attributes checking on tree construction
         pass
 
+def exittest(mode='mem', number=1):
+    if mode == 'mem':
+        dummy = [0, 0, 0, 0, [], [], [], []]
+        node_0 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+        dummy = [1, 1, 1, 0, [], [], [], []]
+        node_1 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+        dummy = [2, 3, 5, 1, [], [], [], []]
+        node_2 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+        dummy = [3, 1, 1, 2, [], [], [], []]
+        node_3 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+
+        dummy = [4, 4, 1, 1, [], [], [], []]
+        node_4 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+
+        dummy = [5, 1, 1, 4, [], [], [], []]
+        node_5 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+
+        dummy = [6, 6, 6, 1, [], [], [], []]
+        node_6 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+
+        dummy = [7, 4, 1, 4, [], [], [], []]
+        node_7 = Node(data=(None, {'p': 0,
+                                   'g': 1,
+                                   's': 2,
+                                   'pp': 3,
+                                   'socket': 4,
+                                   'pipe': 5,
+                                   'fifo': 6,
+                                   'files': 7}, None, dummy))
+#        node_1.add_child(node_4)
+
+        node_1.add_child(node_2)
+        '''
+        node_1.add_child(node_6)
+        node_4.add_child(node_5)
+        node_2.add_child(node_3)
+        node_6.add_child(node_7)
+        '''
+        node_0.add_child(node_1)
+
+        p = Parser(from_snapshot=True, in_mem=node_1)
+
+        p.downward(True)
+
 
 def stubtest(mode='mem'):
     if mode == 'mem':
@@ -246,7 +339,7 @@ def unittest(mode='mem'):
 
 
 if __name__ == '__main__':
-    unittest(mode='mem')
+    exittest(mode='mem', number=2)
 
 # tests:
 # 0) 111[211] - passed

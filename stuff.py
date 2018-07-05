@@ -1,5 +1,6 @@
 from enum import Enum
 import copy
+import sortedcontainers
 
 stack = []
 # deep copy wrapper for recursive copy dynamic structures (recursive nodes, trees, etc)
@@ -25,5 +26,25 @@ class FileMode(Enum):
     O_TRUNC = 1000,
     O_APPEND = 10,
     O_SYNC = 20
+
+
+Common_container = sortedcontainers.SortedList
+
+
+SG_container = sortedcontainers.SortedDict
+
+
+def test():
+    s = SG_container()
+    s[1] = sortedcontainers.SortedDict()
+    s[1] = 1
+    if 1 not in s.keys():
+        print('False')
+    print(s.keys())
+test()
+
+
+
+
 
 
