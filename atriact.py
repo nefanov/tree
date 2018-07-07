@@ -275,5 +275,8 @@ def action_print(current, **kwargs):
     for k, v in kwargs.items():
         if '__noprint__' not in k:
             s += str(v) + ' = ' + str(current.S[current.I.names[v]]) + '; '
+    lin_log=kwargs.get('lin_log', None)
+    if lin_log is not None:
+        lin_log += ' '.join(current.S[:2])
     print(s)
     return False, current

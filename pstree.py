@@ -159,7 +159,10 @@ def get_pstree(use_cache=False, permanent=False, **kwargs):
 
     construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct=root, use_cache=use_cache,
                    **kwargs)
-    root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print')
+    s = kwargs.get('__noprint__lin_log', None)
+
+    root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print', __noprint__lin_log=s)
+    print(s)
     return root
 
 
@@ -169,5 +172,6 @@ def save_serialized(fn, obj):
 
 if __name__ == '__main__':
     # if need, pass caches and other stuff into kwargs
-    get_pstree(SPG_container=None, P_container=None)
+    s='Tree:'
+    get_pstree(SPG_container=None, P_container=None, __noprint__lin_log=s)
 

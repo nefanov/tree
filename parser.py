@@ -5,7 +5,7 @@ import pickle
 
 
 def print_tree(root):
-    root.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g',s='s')
+    root.dfs(action_print, __noprint__prefix='|- ', mode='parsed', p='p', g='g', s='s')
 
 
 class Parser:
@@ -47,6 +47,13 @@ class Parser:
     def upward(self):
         # now no need upward because of tree hierarchy and attributes checking on tree construction
         pass
+
+class LinearParser(Parser):
+    def add_string(self, s):
+        self = s
+
+    def lr_pass(self, s):
+        self.pstree = first_pass(s, self.I.names[:3])
 
 def exittest(mode='mem', number=1):
     if mode == 'mem':
@@ -339,7 +346,7 @@ def unittest(mode='mem'):
 
 
 if __name__ == '__main__':
-    exittest(mode='mem', number=2)
+    stubtest(mode='mem')#, number=2)
 
 # tests:
 # 0) 111[211] - passed
