@@ -162,7 +162,7 @@ def get_pstree(use_cache=False, permanent=False, **kwargs):
     s = kwargs.get('__noprint__lin_log', None)
 
     root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print', __noprint__lin_log=s)
-    print(s)
+
     return root
 
 
@@ -172,6 +172,8 @@ def save_serialized(fn, obj):
 
 if __name__ == '__main__':
     # if need, pass caches and other stuff into kwargs
-    s='Tree:'
-    get_pstree(SPG_container=None, P_container=None, __noprint__lin_log=s)
+    s = 'Tree:'
+    path = 'lin_log.txt'
+    linear_log_fp = open(path,'w+')
+    get_pstree(SPG_container=None, P_container=None, __noprint__lin_log=linear_log_fp)
 

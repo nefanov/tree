@@ -48,11 +48,29 @@ class Node:
         tracer = False
         current = self
         chk, current = action(current, **kwargs)
+        fp = kwargs.get('__noprint__lin_log', None)
+        if fp:
+            try:
+                fp.write(" ".join([str(x) for x in current.S[:4]]))
+            except Exception as e:
+                print("Linear representation writing error:", e)
         if chk:
             return (chk, current)
 
+        if fp:
+            try:
+                fp.write(" [ ")
+            except Exception as e:
+                print("Linear representation writing error:", e)
+
         if len(current.children) <= 0:
+            if fp:
+                try:
+                    fp.write(" ] ")
+                except Exception as e:
+                    print("Linear representation writing error:", e)
             return (chk, current)
+
         else:
             if '__noprint__prefix' in kwargs:
                 kwargs['__noprint__prefix'] = '| '+kwargs['__noprint__prefix']
@@ -62,7 +80,11 @@ class Node:
                 if chk == True:
                     tracer = chk
                     return tracer, crnt
-
+        if fp:
+            try:
+                fp.write(" ] ")
+            except Exception as e:
+                print("Linear representation writing error:", e)
 
             return chk, crnt  # ret from recursion
 
