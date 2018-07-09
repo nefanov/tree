@@ -12,3 +12,5 @@
 + сделать нормальное считывание из строки (sec(r)-2017) - compose string & 1st pass processing
 - нужен интеграционный тест
 
+ps -Al | grep -c fork
+
