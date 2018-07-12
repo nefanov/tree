@@ -13,4 +13,5 @@
 - нужен интеграционный тест
 
 ps -Al | grep -c fork
+ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9
 
