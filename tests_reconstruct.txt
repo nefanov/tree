@@ -14,3 +14,5 @@
 # 
 # для каждого из экспериментов типа 2 делаем get_pstree(fn=...)
 # запускаем парсер, меряем время, пишем в reconstruct_test_2_node.txt
+
+time python3 parser.py string <filename_until'.'> >> reconstruct_test_<n>_<mode>.txt
