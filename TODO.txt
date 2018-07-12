@@ -5,9 +5,13 @@
 5) Investigate the robustness
 6) tree string notation to analyser
 7) Исследовать проблему в MCS-формализмах. Мотивация: поддержка семантики на уровне синтаксиса.
+8) Сделать окружение для фуззеров
 
-8)На SEC(R):
-- Добавить exit
-- сделать окружение для фуззеров
-- сделать нормальное считывание из строки (sec(r)-2017) - compose string & 1st pass processing
+9) На SEC(R):
++ Добавить exit
++ сделать нормальное считывание из строки (sec(r)-2017) - compose string & 1st pass processing
+- нужен интеграционный тест
+
+ps -Al | grep -c fork
+ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9
 
