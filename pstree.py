@@ -11,7 +11,7 @@ import pickle
 from stuff import Common_container, SG_container
 from tree import *
 from atriact import *
-
+sys.setrecursionlimit(100000)
 _base_path = os.getcwd()
 parentdir_of_file = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append(parentdir_of_file)
@@ -48,7 +48,7 @@ def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, fi
 
     except psutil.Error:
         name = "?"
-    print(name, node, sid, pgid)
+#    print(name, node, sid, pgid)
 
     # write additional resources , like fds, into fs
     if fs:
@@ -136,7 +136,7 @@ def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, fi
 
 # make pstree as data structure
 # now this is a dict of lists: 'ppid': [pids]
-def get_pstree(use_cache=False, permanent=False,fpath='res_pstree', **kwargs):
+def get_pstree(use_cache=False, permanent=False,fpath='res_pstree', save_tree_fmt='linear',**kwargs):
     tree = collections.defaultdict(list)
     for p in psutil.process_iter():
         try:
@@ -160,10 +160,11 @@ def get_pstree(use_cache=False, permanent=False,fpath='res_pstree', **kwargs):
     construct_tree(1, tree, indent='|- ', permanent=False, filler=True, fill_struct=root, use_cache=use_cache,
                    **kwargs)
     s = kwargs.get('__noprint__lin_log', None)
-
-#    root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print', __noprint__lin_log=s)
+    if s is not None:
+        root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print', __noprint__lin_log=s)
     f = fpath + '.pkl'
-    save_serialized(f, root)
+    if save_tree_fmt == 'pkl':
+        save_serialized(f, root)
 
     return root
 
@@ -183,7 +184,11 @@ if __name__ == '__main__':
     except:
         suf = '9000'
     path = 'lin_log_'+str(suf)
-    linear_log_fp = open(path + '.txt', 'w+')
-    get_pstree(SPG_container=None, P_container=None, __noprint__lin_log=linear_log_fp,fpath=path)
-    linear_log_fp.close()
+    if sys.argv[2] == 'txt':
+        linear_log_fp = open(path + '.txt', 'w+')
+    else:
+        linear_log_fp = None
+    
+    get_pstree(SPG_container=None, P_container=None,save_tree_fmt=str(sys.argv[2]) ,__noprint__lin_log=linear_log_fp,fpath=path)
+#    linear_log_fp.close()
 

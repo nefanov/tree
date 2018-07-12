@@ -3,12 +3,18 @@
 # запускаем бинать. Ждём, пока нужное дерево развернётся (бинари пишут в лог)
 # запускаем pstree.get_pstree() для каждого из опытов, меряем время работы и перенаправляем в файл test_1_times_get.txt
 # пример:
-time python3 pstree.py 1 >> test_1_times_get.txt 
+time python3 pstree.py 1 txt >> test_1_times_get.txt
+#и почистить за собой:
+ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9 
 # по окончании в папочке лежат 8 txt-файлов и 8 .pkl-дампов и файлик с результатами записи
 #
 # запускатор CS-теста
 # в папочке лежат 8 бинарей "2_*". Для каждого:
 # запускаем бинать. Ждём, пока нужное дерево развернётся (бинари пишут в лог)
 # запускаем pstree.get_pstree() для каждого из опытов, меряем время работы и перенаправляем в файл test_2_times_get.txt
-time python3 pstree.py 1 >> test_2_times_get.txt
+time python3 pstree.py 1 pkl >> test_2_times_get.txt
+#и почистить за собой:
+ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9 
 # по окончании в папочке лежат 8 txt-файлов и 8 .pkl-дампов и файлик с результатами записи
+
+

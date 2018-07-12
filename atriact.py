@@ -279,5 +279,5 @@ def action_print(current, **kwargs):
     lin_log=kwargs.get('lin_log', None)
     if lin_log is not None:
         lin_log += ' '.join(current.S[:2])
-    print(s)
+    #print(s)
     return False, current
