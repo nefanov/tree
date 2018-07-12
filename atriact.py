@@ -206,9 +206,10 @@ def action_reconstruct(current, **kwargs):
             res, _ = current.parent.parent.parent.upbranch(action=action_check_attr_eq, name='p',
                                                            val=current.S[current.I.names['s']])
         if res:
-            current.parent.children = current.parent.delete_child(current.index)
-            current.parent = current.parent.parent
+#            current.parent.children = current.parent.delete_child(current.index)
             current.parent.delete_child(current.index) # redundancy - needs dynamic refilling of children list!
+            current.parent = current.parent.parent
+
             current.parent.add_child(current)
 
             # look for group if not id is not suitable

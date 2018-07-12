@@ -14,31 +14,40 @@ class Parser:
     def __init__(self, from_snapshot=False, in_mem=None, pkl_fn=None):
         if not from_snapshot:
             self.pstree = get_pstree()
-        elif in_mem:
+        elif in_mem is not None:
             self.pstree = in_mem
         else:
             try:
-                self.pstree = pickle.load(pkl_fn)
+                with open(pkl_fn,'rb') as f:
+                    self.pstree = pickle.load(f)
             except Exception as e:
                 print('Snapshot file loading error. System is forced to get snapshot of current state')
                 self.pstree = get_pstree()
 
     def load_from_snapshot(self, in_mem=None, pkl_fn=None):
-        if in_mem:
+        if in_mem is not None:
             self.pstree = in_mem
         else:
             try:
-                self.pstree = pickle.load(pkl_fn)
+                with open(pkl_fn,'rb') as f:
+                    self.pstree = pickle.load(f)
+
             except Exception as e:
                 print('Snapshot file loading error:', e)
+        return self.pstree
 
     def update_pstree(self):
         self.pstree = get_pstree()
 
     def downward(self, print_res=False):
+        if not self.pstree:
+            print('trrrrr')
+
         if print_res:
             self.pstree.dfs(action_print, __noprint__prefix='|- ', mode='start', p='p', g='g', s='s')
+
         print('---------------------------Start parsing---------------------------------')
+
         self.pstree.dfs(action_reconstruct)
 #        self.print_tree(self.pstree)
         print('-------------------------------Parsed. Printing results:------------------------------------------------')
@@ -167,7 +176,7 @@ class LinearParser(Parser):
             stack.print_stack()
         return root
 
-def lineartest(s='1 1 1 0 [ 2 1  1   1  [  3  1 1 2 [  ]   ] 4 4 4 1 [  ]   ]'):
+def lineartest(s='1 1 1 0 [ 33616 33616 33616 1 [ 33617 33617 33616 33616 [  ]  ]  ]'):
     print('Go')
     lp = LinearParser('')
 #    lp.add_string(s)
@@ -184,7 +193,19 @@ def lineartest(s='1 1 1 0 [ 2 1  1   1  [  3  1 1 2 [  ]   ] 4 4 4 1 [  ]   ]'):
     print('return from')
     return res
 
+def run_nodetest(fpath):
+    p = Parser(from_snapshot = True, in_mem = None, pkl_fn = fpath)
 
+    #inp_tree = p.load_from_snapshot(in_mem=None, pkl_fn=fpath)
+    _pstree = Node()
+    with open('lin_log_9000.pkl', 'rb') as f:
+        _pstree = pickle.load(f)
+
+        print('ps', _pstree.S.num)
+        p.pstree = _pstree
+#        print(p.pstree.S)
+        res = p.downward(False)
+#        return res
 
 
 
@@ -279,7 +300,7 @@ def exittest(mode='mem', number=1):
 
         p = Parser(from_snapshot=True, in_mem=node_1)
 
-        p.downward(True)
+        p.downward(False)
 
 
 def stubtest(mode='mem'):
@@ -479,7 +500,22 @@ def unittest(mode='mem'):
 
 
 if __name__ == '__main__':
-    l = lineartest()#(mode='mem')#, number=2)
+    try:
+        mode = str(sys.argv[1])
+    except:
+        mode = 'node'
+    try:
+        fname = str(sys.argv[2])
+    except:
+        fname = 'lin_log_9000'
+    if mode == 'string':
+        with open(fname+'.txt', 'r') as f:
+            data = f.read().replace('\n', ' ')
+            result = lineartest(data) #(mode='mem')#, number=2)
+            p = Parser(from_snapshot=True, in_mem=result)
+            p.downward(False)
+    else:
+        r = run_nodetest(fname+'.pkl')
     print('done')
 
 # tests:

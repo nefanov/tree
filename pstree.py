@@ -136,7 +136,7 @@ def construct_tree(node, tree, indent='  ', output_dir='./', permanent=False, fi
 
 # make pstree as data structure
 # now this is a dict of lists: 'ppid': [pids]
-def get_pstree(use_cache=False, permanent=False, **kwargs):
+def get_pstree(use_cache=False, permanent=False,fpath='res_pstree', **kwargs):
     tree = collections.defaultdict(list)
     for p in psutil.process_iter():
         try:
@@ -161,19 +161,29 @@ def get_pstree(use_cache=False, permanent=False, **kwargs):
                    **kwargs)
     s = kwargs.get('__noprint__lin_log', None)
 
-    root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print', __noprint__lin_log=s)
+#    root.dfs(action_print, K='p', __noprint__prefix='|- ', mode='print', __noprint__lin_log=s)
+    f = fpath + '.pkl'
+    save_serialized(f, root)
 
     return root
 
 
-def save_serialized(fn, obj):
-    return pickle.dump(obj, fn)
+def save_serialized(fname, obj):
+    with open(fname, 'wb') as f:
+        print('Writing to file',fname )
+        pickle.dump(obj, f)
 
 
 if __name__ == '__main__':
     # if need, pass caches and other stuff into kwargs
     s = 'Tree:'
-    path = 'lin_log.txt'
-    linear_log_fp = open(path,'w+')
-    get_pstree(SPG_container=None, P_container=None, __noprint__lin_log=linear_log_fp)
+    suf = '0'
+    try:
+        suf = sys.argv[1]
+    except:
+        suf = '9000'
+    path = 'lin_log_'+str(suf)
+    linear_log_fp = open(path + '.txt', 'w+')
+    get_pstree(SPG_container=None, P_container=None, __noprint__lin_log=linear_log_fp,fpath=path)
+    linear_log_fp.close()
 

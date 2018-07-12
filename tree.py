@@ -47,6 +47,7 @@ class Node:
     def dfs(self, action=action_check_attr, **kwargs):
         tracer = False
         current = self
+        #print(self)
         chk, current = action(current, **kwargs)
         fp = kwargs.get('__noprint__lin_log', None)
         if fp:
@@ -75,8 +76,15 @@ class Node:
             if '__noprint__prefix' in kwargs:
                 kwargs['__noprint__prefix'] = '| '+kwargs['__noprint__prefix']
             ch = current.children[:]
+#            print('actual childen of ', current)#,":", ch)
             for en, node in enumerate(ch):
-                (chk, crnt) = node.dfs(action, **kwargs)
+                try:
+                    (chk, crnt) = node.dfs(action, **kwargs)
+                except:
+                    pass
+                    #print('Exception:', node.S.num, node.parent.S.num, node.parent.parent.S.num, current.S.num)
+                    #for debug:                    print(id(node), id(node.parent), id(node.parent.parent), id(current))
+
                 if chk == True:
                     tracer = chk
                     return tracer, crnt
